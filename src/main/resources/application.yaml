@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 12345
+  data:
+    rest:
+      default-page-size: 18
+  main:
+    allow-bean-definition-overriding: true
+
+debug: true
