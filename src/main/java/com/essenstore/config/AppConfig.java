@@ -1,7 +1,6 @@
 package com.essenstore.config;
 
 import com.essenstore.entity.*;
-import com.essenstore.service.SizeService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

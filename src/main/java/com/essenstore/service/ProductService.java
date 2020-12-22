@@ -25,12 +25,9 @@ public class ProductService extends BaseEntityService<Product, Long> {
 
     public Page<Product> getBy(String category, String gender, Pageable pageable) {
         Gender genderVal = Gender.get(gender);
-        System.out.println(genderVal);
         Category categoryVal = categoryService.getBy(category);
-        System.out.println(categoryVal);
         if (genderVal == Gender.EMPTY || !categoryVal.isExist())
             return Page.empty();
         return repository.findByCategoryAndGender(categoryVal, genderVal, pageable);
     }
-
 }
