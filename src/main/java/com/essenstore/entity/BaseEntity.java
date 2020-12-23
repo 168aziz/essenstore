@@ -21,7 +21,6 @@ import java.time.Instant;
 @Setter
 @MappedSuperclass
 @ToString(of = {"id", "name"})
-@Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Nameable, Serializable {
 
@@ -66,8 +65,7 @@ public abstract class BaseEntity implements Nameable, Serializable {
         return id == null || id == 0;
     }
 
-    public BaseEntity setName(String name) {
+    public void setName(String name) {
         this.name = StringUtils.normalizeSpace(name);
-        return this;
     }
 }

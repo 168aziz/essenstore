@@ -15,7 +15,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "color")
-@Accessors(chain = true)
 @ToString(callSuper = true)
 public class Color extends BaseEntity {
 

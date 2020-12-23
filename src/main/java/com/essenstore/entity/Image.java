@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "image")
-@Accessors(chain = true)
 @ToString(of = {"name", "path"}, callSuper = true)
 public class Image extends BaseEntity {
 

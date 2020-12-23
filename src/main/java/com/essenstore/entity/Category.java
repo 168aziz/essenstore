@@ -14,9 +14,7 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
-@Accessors(chain = true)
 @Table(name = "category")
-@ToString(callSuper = true)
 @NamedEntityGraph(name = "Category.products",
         attributeNodes = @NamedAttributeNode("products"))
 public class Category extends BaseEntity {

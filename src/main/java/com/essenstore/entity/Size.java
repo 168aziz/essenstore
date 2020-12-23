@@ -15,7 +15,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "size")
-@Accessors(chain = true)
 @ToString(of = {"name"}, callSuper = true)
 public class Size extends BaseEntity {
 

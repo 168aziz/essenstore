@@ -4,5 +4,5 @@ public interface Nameable {
 
     String getName();
 
-    Nameable setName(String name);
+    void setName(String name);
 }

@@ -17,8 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "brand")
-@Accessors(chain = true)
-@ToString(callSuper = true)
+@ToString(of = {}, callSuper = true)
 public class Brand extends BaseEntity {
 
     @JsonIgnore
