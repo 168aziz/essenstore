@@ -16,12 +16,8 @@ import java.util.Set;
 @Setter
 @Table(name = "color")
 @Accessors(chain = true)
-@ToString(of = {"name"}, callSuper = true)
+@ToString(callSuper = true)
 public class Color extends BaseEntity {
-
-    @JsonProperty("name")
-    @Column(name = "name", unique = true)
-    private String name;
 
     @JsonIgnore
     @ManyToMany

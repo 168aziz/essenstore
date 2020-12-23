@@ -19,14 +19,11 @@ import java.util.Set;
 @Setter
 @Table(name = "product")
 @Accessors(chain = true)
-@ToString(of = {"name"}, callSuper = true)
+@ToString(callSuper = true)
 @NamedEntityGraph(name = "Product.csi",
         attributeNodes = {@NamedAttributeNode("colors"), @NamedAttributeNode("sizes"), @NamedAttributeNode("images")})
 @NamedEntityGraph(name = "Product.images", attributeNodes = @NamedAttributeNode("images"))
 public class Product extends BaseEntity {
-
-    @Column(name = "name")
-    private String name;
 
     @Column(name = "description")
     private String description;
@@ -63,11 +60,6 @@ public class Product extends BaseEntity {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Image> images = new HashSet<>();
-
-    public Product setName(String name) {
-        this.name = StringUtils.normalizeSpace(name);
-        return this;
-    }
 
     public Product setDescription(String description) {
         this.description = StringUtils.normalizeSpace(description);

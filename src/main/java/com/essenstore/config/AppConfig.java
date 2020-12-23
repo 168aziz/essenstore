@@ -1,6 +1,9 @@
 package com.essenstore.config;
 
 import com.essenstore.entity.*;
+import com.essenstore.factory.EntityServiceFactory;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +33,13 @@ public class AppConfig {
     @Bean
     public Category emptyCategory() {
         return new Category();
+    }
+
+    @Bean
+    public FactoryBean<?> serviceLocatorFactoryBean() {
+        var serviceLocator = new ServiceLocatorFactoryBean();
+        serviceLocator.setServiceLocatorInterface(EntityServiceFactory.class);
+        return serviceLocator;
     }
 
 }

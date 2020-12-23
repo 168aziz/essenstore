@@ -1,10 +1,12 @@
 package com.essenstore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -18,7 +20,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @MappedSuperclass
-@ToString(of = {"id"})
+@ToString(of = {"id", "name"})
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Nameable, Serializable {
@@ -27,6 +29,10 @@ public abstract class BaseEntity implements Nameable, Serializable {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonProperty("name")
+    @Column(name = "name", unique = true)
+    private String name;
 
     @CreatedBy
     @JsonIgnore
@@ -60,4 +66,8 @@ public abstract class BaseEntity implements Nameable, Serializable {
         return id == null || id == 0;
     }
 
+    public BaseEntity setName(String name) {
+        this.name = StringUtils.normalizeSpace(name);
+        return this;
+    }
 }

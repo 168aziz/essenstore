@@ -1,10 +1,14 @@
 package com.essenstore.dto;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
-@RequiredArgsConstructor
+@Getter
+@Setter
 public class NameDto {
 
+    @JsonProperty("name")
     private String name;
 
 }

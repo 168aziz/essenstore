@@ -16,14 +16,10 @@ import java.util.Set;
 @Getter
 @Accessors(chain = true)
 @Table(name = "category")
-@ToString(of = "name", callSuper = true)
+@ToString(callSuper = true)
 @NamedEntityGraph(name = "Category.products",
         attributeNodes = @NamedAttributeNode("products"))
 public class Category extends BaseEntity {
-
-    @JsonProperty("name")
-    @Column(name = "name", unique = true)
-    private String name;
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
