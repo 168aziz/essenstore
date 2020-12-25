@@ -36,6 +36,11 @@ public class AppConfig {
     }
 
     @Bean
+    public User emptyUser() {
+        return new User();
+    }
+
+    @Bean
     public FactoryBean<?> serviceLocatorFactoryBean() {
         var serviceLocator = new ServiceLocatorFactoryBean();
         serviceLocator.setServiceLocatorInterface(EntityServiceFactory.class);

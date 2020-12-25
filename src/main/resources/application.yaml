@@ -11,5 +11,8 @@ spring:
       default-page-size: 18
   main:
     allow-bean-definition-overriding: true
+  security:
+    filter:
+      order: 10
 
-debug: false
+debug: true
