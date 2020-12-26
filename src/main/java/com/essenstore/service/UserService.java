@@ -1,21 +1,31 @@
 package com.essenstore.service;
 
+import com.essenstore.dto.RegisterUserDto;
 import com.essenstore.entity.Role;
+import com.essenstore.entity.Status;
 import com.essenstore.entity.User;
+import com.essenstore.entity.Verified;
 import com.essenstore.repository.UserRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService extends BaseEntityService<User, Long> implements UserDetailsService {
 
     private final UserRepository repository;
 
-    public UserService(User emptyObject, UserRepository repository) {
+    private final ModelMapper modelMapper;
+
+    @Autowired
+    public UserService(User emptyObject, UserRepository repository, ModelMapper modelMapper) {
         super(emptyObject, repository);
         this.repository = repository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -44,5 +54,14 @@ public class UserService extends BaseEntityService<User, Long> implements UserDe
     @Override
     public User getBy(String email) {
         return repository.findByEmail(email).orElse(getEmptyObject());
+    }
+
+    @Transactional
+    public void register(RegisterUserDto userDto) {
+        User user = modelMapper.map(userDto, User.class);
+        user.setStatus(Status.ACTIVE);
+        user.setRole(Role.USER);
+        user.setVerified(Verified.DISABLED);
+        super.save(user);
     }
 }

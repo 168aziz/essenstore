@@ -2,6 +2,7 @@ package com.essenstore.config;
 
 import com.essenstore.entity.*;
 import com.essenstore.factory.EntityServiceFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
@@ -47,4 +48,8 @@ public class AppConfig {
         return serviceLocator;
     }
 
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 }
