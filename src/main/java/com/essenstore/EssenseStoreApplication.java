@@ -9,7 +9,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @SpringBootApplication
 @EnableSpringDataWebSupport
 @PropertySource(value = "classpath:app.properties")
-@EnableJpaAuditing(auditorAwareRef = "aditorAwareBean")
+@EnableJpaAuditing(auditorAwareRef = "auditorAwareBean")
 public class EssenseStoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(EssenseStoreApplication.class, args);

@@ -4,6 +4,7 @@ import com.essenstore.entity.Category;
 import com.essenstore.entity.Gender;
 import com.essenstore.entity.Product;
 import com.essenstore.repository.ProductRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +24,11 @@ public class ProductService extends BaseEntityService<Product, Long> {
         this.categoryService = categoryService;
     }
 
-    public Page<Product> getBy(String category, String gender, Pageable pageable) {
+    public Page<Product> getBy(String category, String gender, Pageable pageable) throws NotFoundException {
         Gender genderVal = Gender.get(gender);
         Category categoryVal = categoryService.getBy(category);
-        if (genderVal == Gender.EMPTY || !categoryVal.isExist())
-            return Page.empty();
+        if (genderVal == Gender.EMPTY)
+            throw new NotFoundException("Product not found");
         return repository.findByCategoryAndGender(categoryVal, genderVal, pageable);
     }
 }

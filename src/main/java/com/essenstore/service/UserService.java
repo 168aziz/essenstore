@@ -36,7 +36,7 @@ public class UserService extends BaseEntityService<User, Long> implements UserDe
                                 .builder()
                                 .username(user.getEmail())
                                 .password(user.getPassword())
-                                .authorities(user.getRole())
+                                .roles(user.getRole().toString())
                                 .disabled(!user.getVerified().isVerified())
                                 .accountLocked(!user.getStatus().isActive())
                                 .build())

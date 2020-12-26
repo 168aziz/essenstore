@@ -1,21 +1,19 @@
 package com.essenstore.exception;
 
-import com.essenstore.utils.Utils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
-import static com.essenstore.utils.Utils.*;
-import static org.springframework.http.HttpStatus.*;
+import static com.essenstore.utils.Utils.response;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestControllerAdvice
 public class RestExceptions {
@@ -35,4 +33,15 @@ public class RestExceptions {
 
         return response(errors, BAD_REQUEST);
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> invalidAuthenticationException() {
+        return ResponseEntity.status(FORBIDDEN).build();
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<?> handleValidationExceptions() {
+        return ResponseEntity.badRequest().build();
+    }
+
 }

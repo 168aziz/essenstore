@@ -12,7 +12,6 @@ public enum Role implements GrantedAuthority {
     ADMIN,
     MODERATOR;
 
-
     @Override
     public String getAuthority() {
         return this.toString();

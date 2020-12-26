@@ -37,7 +37,7 @@ public class JwtTokenUtil {
                 .builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 10 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationDate * 1000))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
         return String.format("%s %s", prefix, token);

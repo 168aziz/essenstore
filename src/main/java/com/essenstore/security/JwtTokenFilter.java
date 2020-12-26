@@ -4,6 +4,7 @@ import com.essenstore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,16 +28,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final UserService userService;
 
+    @Value("${jwt.prefix}")
+    private String prefix;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith("Bearer ")) {
+        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith(prefix)) {
             chain.doFilter(request, response);
             return;
         }
 
-        final String token = authHeader.split(" ")[1].trim();
+        final String token = authHeader.split("\\s")[1].trim();
         if (!jwtTokenUtil.validateToken(token)) {
             chain.doFilter(request, response);
             return;

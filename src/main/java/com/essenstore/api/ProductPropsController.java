@@ -10,10 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Positive;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequestMapping("api/{service}")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -22,6 +27,7 @@ public class ProductPropsController {
     private final EntityServiceFactory serviceFactory;
 
     @GetMapping(params = {"page"})
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName,
                                     @PageableDefault Pageable pageable) {
         return getService(serviceName)
@@ -34,6 +40,7 @@ public class ProductPropsController {
     }
 
     @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName) {
         return getService(serviceName)
                 .map(service -> {
@@ -46,8 +53,9 @@ public class ProductPropsController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> get(@PathVariable("service") EntityServiceName serviceName,
-                                 @PathVariable Long id) {
+                                 @PathVariable @Positive Long id) {
         return getService(serviceName)
                 .map(service -> {
                     var entity = service.getBy(id);
@@ -59,8 +67,9 @@ public class ProductPropsController {
     }
 
     @PostMapping
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<BaseEntity> add(@PathVariable("service") EntityServiceName serviceName,
-                                          @RequestBody NameDto nameDto) {
+                                          @RequestBody @Positive NameDto nameDto) {
         return getService(serviceName)
                 .map(service -> {
                     var entity = service.getEmptyObject();
@@ -74,8 +83,9 @@ public class ProductPropsController {
     }
 
     @PutMapping("{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> update(@PathVariable("service") EntityServiceName serviceName,
-                                    @PathVariable Long id, @RequestBody NameDto nameDto) {
+                                    @PathVariable @Positive Long id, @RequestBody NameDto nameDto) {
         return getService(serviceName)
                 .map(service -> {
                     var currentEntity = service.getBy(id);
@@ -90,8 +100,9 @@ public class ProductPropsController {
     }
 
     @DeleteMapping("{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> remove(@PathVariable("service") EntityServiceName serviceName,
-                                    @PathVariable Long id) {
+                                    @PathVariable @Positive Long id) {
         return getService(serviceName)
                 .map(service -> {
                     var entity = service.getBy(id);
