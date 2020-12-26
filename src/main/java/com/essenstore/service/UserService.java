@@ -5,6 +5,7 @@ import com.essenstore.entity.Role;
 import com.essenstore.entity.Status;
 import com.essenstore.entity.User;
 import com.essenstore.entity.Verified;
+import com.essenstore.exception.NotFoundException;
 import com.essenstore.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,10 @@ public class UserService extends BaseEntityService<User, Long> implements UserDe
 
 
     @Override
-    public User getBy(String email) {
-        return repository.findByEmail(email).orElse(getEmptyObject());
+    public User getBy(String email) throws NotFoundException {
+        return repository.findByEmail(email).orElseThrow(() -> {
+            throw new NotFoundException();
+        });
     }
 
     @Transactional

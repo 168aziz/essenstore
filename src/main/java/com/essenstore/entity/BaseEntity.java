@@ -29,7 +29,6 @@ public abstract class BaseEntity implements Nameable, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("name")
     @Column(name = "name", unique = true)
     private String name;
 

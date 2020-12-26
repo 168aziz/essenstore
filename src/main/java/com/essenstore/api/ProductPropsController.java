@@ -2,6 +2,7 @@ package com.essenstore.api;
 
 import com.essenstore.dto.NameDto;
 import com.essenstore.entity.BaseEntity;
+import com.essenstore.exception.BadRequestException;
 import com.essenstore.factory.EntityServiceFactory;
 import com.essenstore.factory.EntityServiceName;
 import com.essenstore.service.BaseEntityService;
@@ -16,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
-import java.util.Optional;
 
 @Validated
 @RestController
@@ -30,55 +30,32 @@ public class ProductPropsController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName,
                                     @PageableDefault Pageable pageable) {
-        return getService(serviceName)
-                .map(service -> {
-                    var page = service.getAll(pageable);
-                    if (!page.hasContent())
-                        return ResponseEntity.notFound().build();
-                    return ResponseEntity.ok(page);
-                }).orElse(ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(getService(serviceName).getAll(pageable));
     }
 
     @GetMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName) {
-        return getService(serviceName)
-                .map(service -> {
-                    var list = service.getAll();
-                    if (list.isEmpty())
-                        return ResponseEntity.notFound().build();
-                    return ResponseEntity.ok(list);
-                })
-                .orElse(ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(getService(serviceName).getAll());
     }
 
     @GetMapping("{id}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> get(@PathVariable("service") EntityServiceName serviceName,
                                  @PathVariable @Positive Long id) {
-        return getService(serviceName)
-                .map(service -> {
-                    var entity = service.getBy(id);
-                    if (!entity.isExist())
-                        return ResponseEntity.notFound().build();
-                    return ResponseEntity.ok(entity);
-                })
-                .orElse(ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(getService(serviceName).getBy(id));
     }
 
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<BaseEntity> add(@PathVariable("service") EntityServiceName serviceName,
                                           @RequestBody @Positive NameDto nameDto) {
-        return getService(serviceName)
-                .map(service -> {
-                    var entity = service.getEmptyObject();
-                    entity.setName(nameDto.getName());
-                    var saved = service.save(entity);
-                    service.getEmptyObject().setName("");
-                    return ResponseEntity.ok(saved);
-                })
-                .orElse(ResponseEntity.badRequest().build());
+        var service = getService(serviceName);
+        var entity = service.getEmptyObject();
+        entity.setName(nameDto.getName());
+        var saved = service.save(entity);
+        service.getEmptyObject().setName("");
+        return ResponseEntity.ok(saved);
 
     }
 
@@ -86,38 +63,25 @@ public class ProductPropsController {
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> update(@PathVariable("service") EntityServiceName serviceName,
                                     @PathVariable @Positive Long id, @RequestBody NameDto nameDto) {
-        return getService(serviceName)
-                .map(service -> {
-                    var currentEntity = service.getBy(id);
-                    if (!currentEntity.isExist())
-                        return ResponseEntity.notFound().build();
-                    currentEntity.setName(nameDto.getName());
-                    service.save(currentEntity);
-                    return ResponseEntity.accepted().build();
-                })
-                .orElse(ResponseEntity.badRequest().build());
-
+        var service = getService(serviceName);
+        var currentEntity = service.getBy(id);
+        currentEntity.setName(nameDto.getName());
+        service.save(currentEntity);
+        return ResponseEntity.accepted().build();
     }
 
     @DeleteMapping("{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> remove(@PathVariable("service") EntityServiceName serviceName,
                                     @PathVariable @Positive Long id) {
-        return getService(serviceName)
-                .map(service -> {
-                    var entity = service.getBy(id);
-                    if (!entity.isExist())
-                        return ResponseEntity.notFound().build();
-                    service.delete(entity);
-                    return ResponseEntity.accepted().build();
-                })
-                .orElse(ResponseEntity.badRequest().build());
+        getService(serviceName).delete(id);
+        return ResponseEntity.accepted().build();
     }
 
-    private Optional<BaseEntityService<BaseEntity, Long>> getService(EntityServiceName serviceName) {
+    private BaseEntityService<BaseEntity, Long> getService(EntityServiceName serviceName) {
         if (!isServiceExists(serviceName))
-            return Optional.empty();
-        return Optional.of(serviceFactory.getEntityServiceBean(serviceName.getServiceName()));
+            throw new BadRequestException();
+        return serviceFactory.getEntityServiceBean(serviceName.getServiceName());
     }
 
     private boolean isServiceExists(EntityServiceName serviceName) {

@@ -1,6 +1,7 @@
 package com.essenstore.api;
 
 import com.essenstore.entity.Product;
+import com.essenstore.exception.NotFoundException;
 import com.essenstore.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
 
-import static com.essenstore.utils.Utils.updateProduct;
-
 @Validated
 @RestController
 @RequestMapping("api/product")
@@ -30,18 +29,13 @@ public class ProductController {
     public ResponseEntity<Page<Product>> getBy(@PathVariable String gender,
                                                @PathVariable String category,
                                                @PageableDefault Pageable pageable) {
-        var products = productService.getBy(category, gender, pageable);
-        if (products.isEmpty())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productService.getBy(category, gender, pageable));
     }
 
     @PreAuthorize("permitAll()")
     @GetMapping({"/women/{category}/{id}", "/men/{category}/{id}",
             "/boys/{category}/{id}", "/girls/{category}/{id}"})
     public ResponseEntity<Product> productDetails(@PathVariable("id") Product product) {
-        if (!product.isExist())
-            return ResponseEntity.notFound().build();
         return ResponseEntity.ok(product);
     }
 
@@ -54,22 +48,14 @@ public class ProductController {
 
     @PutMapping("{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> update(@PathVariable @Positive Long id, @RequestBody Product product) {
-        var currentProduct = productService.getBy(id);
-        if (!currentProduct.isExist())
-            return ResponseEntity.notFound().build();
-        updateProduct(currentProduct, product);
-        productService.save(currentProduct);
-        return ResponseEntity.ok(currentProduct);
+    public ResponseEntity<?> update(@PathVariable @Positive Long id, @RequestBody Product product) throws NotFoundException {
+        return ResponseEntity.ok(productService.update(id, product));
     }
 
     @DeleteMapping("{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> delete(@PathVariable @Positive Long id) {
-        var product = productService.getBy(id);
-        if (!product.isExist())
-            return ResponseEntity.notFound().build();
-        productService.delete(product);
+    public ResponseEntity<?> delete(@PathVariable @Positive Long id) throws NotFoundException {
+        productService.delete(id);
         return ResponseEntity.accepted().build();
     }
 

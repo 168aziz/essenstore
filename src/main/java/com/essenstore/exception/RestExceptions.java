@@ -44,4 +44,13 @@ public class RestExceptions {
         return ResponseEntity.badRequest().build();
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> notFoundException() {
+        return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> badRequestException(BadRequestException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }
