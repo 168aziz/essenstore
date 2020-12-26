@@ -10,8 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static com.essenstore.utils.Utils.updateProduct;
 
 @RestController
 @RequestMapping("api/product")
@@ -27,16 +26,16 @@ public class ProductController {
         var products = productService.getBy(category, gender, pageable);
 
         if (products.isEmpty())
-            return new ResponseEntity<>(NOT_FOUND);
-        return new ResponseEntity<>(products, OK);
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping({"/women/{category}/{id}", "/men/{category}/{id}",
             "/boys/{category}/{id}", "/girls/{category}/{id}"})
     public ResponseEntity<Product> productDetails(@PathVariable("id") Product product) {
         if (!product.isExist())
-            return new ResponseEntity<>(NOT_FOUND);
-        return new ResponseEntity<>(product, OK);
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping
@@ -50,15 +49,7 @@ public class ProductController {
         var currentProduct = productService.getBy(id);
         if (!currentProduct.isExist())
             return ResponseEntity.notFound().build();
-        currentProduct.setName(product.getName());
-        currentProduct.setDescription(product.getDescription());
-        currentProduct.setCategory(product.getCategory());
-        currentProduct.setBrand(product.getBrand());
-        currentProduct.setOldPrice(product.getOldPrice());
-        currentProduct.setCurrentPrice(product.getCurrentPrice());
-        currentProduct.setGender(product.getGender());
-        currentProduct.setColors(product.getColors());
-        currentProduct.setSizes(product.getSizes());
+        updateProduct(currentProduct, product);
         productService.save(currentProduct);
         return ResponseEntity.ok(currentProduct);
     }

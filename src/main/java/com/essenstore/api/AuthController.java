@@ -37,7 +37,7 @@ public class AuthController {
 
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody AuthDto authDto) {
+    public ResponseEntity<?> login(@RequestBody @Valid AuthDto authDto) {
         try {
             Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(authDto.getEmail(), authDto.getPassword()));
@@ -45,7 +45,7 @@ public class AuthController {
             var user = (User) authenticate.getPrincipal();
             var token = jwtTokenUtil.generateToken(user);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, String.format("%s %s", "Bearer", token))
+                    .header(HttpHeaders.AUTHORIZATION, token)
                     .build();
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

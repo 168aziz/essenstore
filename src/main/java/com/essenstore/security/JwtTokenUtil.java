@@ -24,20 +24,23 @@ public class JwtTokenUtil {
     @Value("${jwt.expdate}")
     private long expirationDate;
 
+    @Value("${jwt.prefix}")
+    private String prefix;
+
     @PostConstruct
     protected void init() {
         jwtSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes());
     }
 
-
     public String generateToken(User user) {
-        return Jwts
+        var token = Jwts
                 .builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 10 * 1000))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+        return String.format("%s %s", prefix, token);
     }
 
     public String getUsername(String token) {
