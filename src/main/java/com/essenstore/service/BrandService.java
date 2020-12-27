@@ -3,6 +3,7 @@ package com.essenstore.service;
 import com.essenstore.entity.Brand;
 import com.essenstore.entity.Category;
 import com.essenstore.entity.Gender;
+import com.essenstore.exception.NotFoundException;
 import com.essenstore.repository.BrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

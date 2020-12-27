@@ -19,7 +19,7 @@ public interface EntityService<T, ID> {
 
     T update(T t);
 
-    void delete(T t);
+    void delete(ID id);
 
     boolean exists(ID id);
 

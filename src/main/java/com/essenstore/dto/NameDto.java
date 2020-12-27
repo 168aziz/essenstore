@@ -1,14 +1,17 @@
 package com.essenstore.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+@Data
 public class NameDto {
 
-    @JsonProperty("name")
+    @Size(max = 250, message = "Property size limit with 250 symbols")
+    @NotBlank(message = "Property name is empty")
     private String name;
 
 }
