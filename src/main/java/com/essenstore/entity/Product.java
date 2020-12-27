@@ -38,12 +38,12 @@ public class Product extends BaseEntity {
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     private BigDecimal currentPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "brand_id")
     @JsonProperty(value = "brand-id")
     private Brand brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     @JsonProperty(value = "category-id")
     private Category category;

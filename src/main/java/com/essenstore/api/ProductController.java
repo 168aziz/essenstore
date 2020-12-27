@@ -1,11 +1,13 @@
 package com.essenstore.api;
 
+import com.essenstore.dto.PageDto;
+import com.essenstore.dto.ProductPageDto;
 import com.essenstore.entity.Product;
 import com.essenstore.exception.NotFoundException;
 import com.essenstore.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +26,14 @@ public class ProductController {
 
     private final ProductService productService;
 
+    private final ModelMapper mapper;
+
     @PreAuthorize("permitAll()")
     @GetMapping("/{gender}/{category}")
-    public ResponseEntity<Page<Product>> getBy(@PathVariable String gender,
-                                               @PathVariable String category,
-                                               @PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(productService.getBy(category, gender, pageable));
+    public ResponseEntity<?> getBy(@PathVariable String gender,
+                                   @PathVariable String category,
+                                   @PageableDefault(size = 18) Pageable pageable) {
+        return ResponseEntity.ok(mapper.map(productService.getBy(category, gender, pageable), ProductPageDto.class));
     }
 
     @PreAuthorize("permitAll()")
@@ -37,6 +41,12 @@ public class ProductController {
             "/boys/{category}/{id}", "/girls/{category}/{id}"})
     public ResponseEntity<Product> productDetails(@PathVariable("id") Product product) {
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("{id}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getBy(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getBy(id));
     }
 
     @PostMapping

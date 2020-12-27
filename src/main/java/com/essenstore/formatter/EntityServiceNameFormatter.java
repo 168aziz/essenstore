@@ -1,5 +1,6 @@
 package com.essenstore.formatter;
 
+import com.essenstore.exception.BadRequestException;
 import com.essenstore.factory.EntityServiceName;
 import org.springframework.format.Formatter;
 
@@ -9,7 +10,11 @@ public class EntityServiceNameFormatter implements Formatter<EntityServiceName> 
 
     @Override
     public EntityServiceName parse(String path, Locale locale) {
-        return EntityServiceName.getByPath(path);
+        var serviceName = EntityServiceName.getByPath(path);
+        if (serviceName == EntityServiceName.EMPTY)
+            throw new BadRequestException();
+
+        return serviceName;
     }
 
     @Override

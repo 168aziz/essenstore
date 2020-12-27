@@ -1,12 +1,17 @@
 package com.essenstore.config;
 
+import com.essenstore.dto.ProductDto;
 import com.essenstore.entity.*;
 import com.essenstore.factory.EntityServiceFactory;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+
+import java.util.stream.Collectors;
 
 @Configuration
 public class AppConfig {
@@ -50,6 +55,9 @@ public class AppConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        var modelMapper = new ModelMapper();
+
+
+        return modelMapper;
     }
 }

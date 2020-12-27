@@ -1,12 +1,16 @@
 package com.essenstore.api;
 
 import com.essenstore.dto.NameDto;
+import com.essenstore.dto.PageDto;
+import com.essenstore.dto.ProductDto;
+import com.essenstore.dto.PropDto;
 import com.essenstore.entity.BaseEntity;
-import com.essenstore.exception.BadRequestException;
 import com.essenstore.factory.EntityServiceFactory;
 import com.essenstore.factory.EntityServiceName;
 import com.essenstore.service.BaseEntityService;
+import com.essenstore.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @Validated
@@ -26,48 +31,46 @@ public class ProductPropsController {
 
     private final EntityServiceFactory serviceFactory;
 
+    private final ModelMapper mapper;
+
     @GetMapping(params = {"page"})
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName,
-                                    @PageableDefault Pageable pageable) {
-        return ResponseEntity.ok(getService(serviceName).getAll(pageable));
+                                    @PageableDefault(size = 18) Pageable pageable) {
+        return ResponseEntity.ok(mapper.map(getService(serviceName).getAll(pageable), PageDto.class));
     }
 
     @GetMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName) {
-        return ResponseEntity.ok(getService(serviceName).getAll());
+        return ResponseEntity.ok(Utils.mapList(getService(serviceName).getAll(), ProductDto.class));
     }
 
     @GetMapping("{id}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> get(@PathVariable("service") EntityServiceName serviceName,
                                  @PathVariable @Positive Long id) {
-        return ResponseEntity.ok(getService(serviceName).getBy(id));
+        return ResponseEntity.ok(mapper.map(getService(serviceName).getBy(id), PropDto.class));
     }
 
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<BaseEntity> add(@PathVariable("service") EntityServiceName serviceName,
-                                          @RequestBody @Positive NameDto nameDto) {
+    public ResponseEntity<?> add(@PathVariable("service") EntityServiceName serviceName,
+                                 @RequestBody @Valid NameDto nameDto) {
         var service = getService(serviceName);
-        var entity = service.getEmptyObject();
-        entity.setName(nameDto.getName());
-        var saved = service.save(entity);
-        service.getEmptyObject().setName("");
-        return ResponseEntity.ok(saved);
+        var saved = service.save(mapper.map(nameDto, service.getEmptyObject().getClass()));
+        return ResponseEntity.ok(mapper.map(saved, PropDto.class));
 
     }
 
     @PutMapping("{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> update(@PathVariable("service") EntityServiceName serviceName,
-                                    @PathVariable @Positive Long id, @RequestBody NameDto nameDto) {
+                                    @PathVariable @Positive Long id,
+                                    @RequestBody @Valid NameDto nameDto) {
         var service = getService(serviceName);
-        var currentEntity = service.getBy(id);
-        currentEntity.setName(nameDto.getName());
-        service.save(currentEntity);
-        return ResponseEntity.accepted().build();
+        var result = service.update(id, mapper.map(nameDto, service.getEmptyObject().getClass()));
+        return ResponseEntity.ok(mapper.map(result, PropDto.class));
     }
 
     @DeleteMapping("{id}")
@@ -79,13 +82,7 @@ public class ProductPropsController {
     }
 
     private BaseEntityService<BaseEntity, Long> getService(EntityServiceName serviceName) {
-        if (!isServiceExists(serviceName))
-            throw new BadRequestException();
         return serviceFactory.getEntityServiceBean(serviceName.getServiceName());
-    }
-
-    private boolean isServiceExists(EntityServiceName serviceName) {
-        return serviceName != EntityServiceName.EMPTY;
     }
 
 }

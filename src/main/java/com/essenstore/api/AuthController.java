@@ -42,7 +42,7 @@ public class AuthController {
     @PreAuthorize("isAnonymous()")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterUserDto registerUserDto) {
         registerUserDto.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
-        userService.register(registerUserDto);
+        userService.save(registerUserDto);
         return ResponseEntity.accepted().build();
     }
 
