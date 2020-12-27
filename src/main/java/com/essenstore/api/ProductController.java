@@ -1,9 +1,9 @@
 package com.essenstore.api;
 
-import com.essenstore.dto.PageDto;
+import com.essenstore.dto.ProductDetailDto;
+import com.essenstore.dto.ProductDto;
 import com.essenstore.dto.ProductPageDto;
 import com.essenstore.entity.Product;
-import com.essenstore.exception.NotFoundException;
 import com.essenstore.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -36,35 +36,29 @@ public class ProductController {
         return ResponseEntity.ok(mapper.map(productService.getBy(category, gender, pageable), ProductPageDto.class));
     }
 
-    @PreAuthorize("permitAll()")
-    @GetMapping({"/women/{category}/{id}", "/men/{category}/{id}",
-            "/boys/{category}/{id}", "/girls/{category}/{id}"})
-    public ResponseEntity<Product> productDetails(@PathVariable("id") Product product) {
-        return ResponseEntity.ok(product);
-    }
-
     @GetMapping("{id}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getBy(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getBy(id));
+        return ResponseEntity.ok(mapper.map(productService.getBy(id), ProductDto.class));
     }
 
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> add(@RequestBody Product product) {
-        productService.save(product);
+    public ResponseEntity<?> add(@RequestBody ProductDetailDto productDto) {
+        productService.save(mapper.map(productDto, Product.class));
         return ResponseEntity.accepted().build();
     }
 
     @PutMapping("{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> update(@PathVariable @Positive Long id, @RequestBody Product product) throws NotFoundException {
-        return ResponseEntity.ok(productService.update(id, product));
+    public ResponseEntity<?> update(@PathVariable @Positive Long id,
+                                    @RequestBody ProductDetailDto productDto) {
+        return ResponseEntity.ok(productService.update(id, mapper.map(productDto, Product.class)));
     }
 
     @DeleteMapping("{id}")
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> delete(@PathVariable @Positive Long id) throws NotFoundException {
+    public ResponseEntity<?> delete(@PathVariable @Positive Long id) {
         productService.delete(id);
         return ResponseEntity.accepted().build();
     }

@@ -56,10 +56,12 @@ public abstract class BaseEntity implements Nameable, Serializable {
     @Column(name = "version")
     private int version;
 
+    @JsonIgnore
     public boolean isExist() {
         return id != null && id != 0;
     }
 
+    @JsonIgnore
     public boolean isNone() {
         return id == null || id == 0;
     }

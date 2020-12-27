@@ -1,8 +1,6 @@
 package com.essenstore.api;
 
-import com.essenstore.dto.NameDto;
 import com.essenstore.dto.PageDto;
-import com.essenstore.dto.ProductDto;
 import com.essenstore.dto.PropDto;
 import com.essenstore.entity.BaseEntity;
 import com.essenstore.factory.EntityServiceFactory;
@@ -37,13 +35,15 @@ public class ProductPropsController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName,
                                     @PageableDefault(size = 18) Pageable pageable) {
-        return ResponseEntity.ok(mapper.map(getService(serviceName).getAll(pageable), PageDto.class));
+        var page = mapper.map(getService(serviceName).getAll(pageable), PageDto.class);
+        page.setContent(Utils.mapList(page.getContent(), PropDto.class));
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getAll(@PathVariable("service") EntityServiceName serviceName) {
-        return ResponseEntity.ok(Utils.mapList(getService(serviceName).getAll(), ProductDto.class));
+        return ResponseEntity.ok(Utils.mapList(getService(serviceName).getAll(), PropDto.class));
     }
 
     @GetMapping("{id}")
@@ -56,9 +56,9 @@ public class ProductPropsController {
     @PostMapping
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> add(@PathVariable("service") EntityServiceName serviceName,
-                                 @RequestBody @Valid NameDto nameDto) {
+                                 @RequestBody @Valid PropDto propDto) {
         var service = getService(serviceName);
-        var saved = service.save(mapper.map(nameDto, service.getEmptyObject().getClass()));
+        var saved = service.save(mapper.map(propDto, service.getEmptyObject().getClass()));
         return ResponseEntity.ok(mapper.map(saved, PropDto.class));
 
     }
@@ -67,9 +67,9 @@ public class ProductPropsController {
     @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
     public ResponseEntity<?> update(@PathVariable("service") EntityServiceName serviceName,
                                     @PathVariable @Positive Long id,
-                                    @RequestBody @Valid NameDto nameDto) {
+                                    @RequestBody @Valid PropDto propDto) {
         var service = getService(serviceName);
-        var result = service.update(id, mapper.map(nameDto, service.getEmptyObject().getClass()));
+        var result = service.update(id, mapper.map(propDto, service.getEmptyObject().getClass()));
         return ResponseEntity.ok(mapper.map(result, PropDto.class));
     }
 

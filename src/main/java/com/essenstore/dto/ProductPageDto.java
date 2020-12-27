@@ -1,12 +1,10 @@
 package com.essenstore.dto;
 
 import com.essenstore.utils.Utils;
-import lombok.Data;
 
 import java.util.List;
 
 public class ProductPageDto extends PageDto {
-
 
     @Override
     public void setContent(List<?> content) {

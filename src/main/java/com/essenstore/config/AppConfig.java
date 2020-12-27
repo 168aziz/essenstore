@@ -57,6 +57,14 @@ public class AppConfig {
     public ModelMapper modelMapper() {
         var modelMapper = new ModelMapper();
 
+        modelMapper.addMappings(new PropertyMap<Product, ProductDto>() {
+            @Override
+            protected void configure() {
+                map().setBrandName(source.getBrand().getName());
+            }
+        });
+
+
 
         return modelMapper;
     }

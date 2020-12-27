@@ -10,8 +10,6 @@ import javax.validation.constraints.Size;
 @Data
 public class NameDto {
 
-    @Size(max = 250, message = "Property size limit with 250 symbols")
-    @NotBlank(message = "Property name is empty")
     private String name;
 
 }

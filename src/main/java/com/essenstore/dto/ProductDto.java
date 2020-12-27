@@ -1,5 +1,6 @@
 package com.essenstore.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -7,7 +8,7 @@ import java.math.BigDecimal;
 @Data
 public class ProductDto {
 
-    private String description;
+    private Long id;
 
     private String name;
 
@@ -15,6 +16,7 @@ public class ProductDto {
 
     private BigDecimal oldPrice;
 
-    private String gender;
+    @JsonProperty("brand-name")
+    private String brandName;
 
 }
