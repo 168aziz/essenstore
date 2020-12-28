@@ -14,6 +14,20 @@ spring:
   security:
     filter:
       order: 10
-
+  thymeleaf:
+    enable-spring-el-compiler: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail.username}
+    password: ${mail.password}
+    protocol: smtp
+    properties:
+      mail:
+        debug: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
 debug: true
 

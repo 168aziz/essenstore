@@ -1,16 +1,27 @@
 package com.essenstore.utils;
 
-import com.essenstore.entity.Product;
+import com.essenstore.entity.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 public class Utils {
 
     private static final ModelMapper mapper = new ModelMapper();
+
+    private static final String sysTempDirectory = System.getProperty("java.io.tmpdir");
 
     public static ResponseEntity<?> response(Object obj, HttpStatus httpStatus) {
         return new ResponseEntity<>(obj, httpStatus);
@@ -34,5 +45,39 @@ public class Utils {
                 .stream()
                 .map(element -> mapper.map(element, targetClass))
                 .collect(Collectors.toList());
+    }
+
+    public static File convertMultipartToFile(Image image) {
+        File file = new File(sysTempDirectory + "/" + image.getName());
+        try {
+            image.getMultipartFile().transferTo(file);
+        } catch (IOException e) {
+            e.getStackTrace();
+        }
+        return file;
+    }
+
+    public static Mail getMail(ActivationCode code) {
+        return Mail.builder()
+                .to(code.getUser().getEmail())
+                .subject("Confirm code")
+                .model(Map.of("code", code.getCode(),
+                        "name", code.getUser().getName(),
+                        "link", code.getUrl()))
+                .build();
+    }
+
+    public static ActivationCode generateCode(User user, String url) {
+        var code = UUID.randomUUID().toString();
+        return ActivationCode
+                .builder()
+                .code(code)
+                .user(user)
+                .url(format("%s/api/auth/%s", url, code))
+                .build();
+    }
+
+    public static Duration timeDifference(Instant instant) {
+        return Duration.between(LocalDateTime.now(), instant);
     }
 }

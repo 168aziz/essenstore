@@ -60,11 +60,11 @@ public class UserService extends BaseEntityService<User, Long> implements UserDe
     }
 
     @Transactional
-    public void save(RegisterUserDto userDto) {
+    public User save(RegisterUserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
         user.setStatus(Status.ACTIVE);
         user.setRole(Role.USER);
         user.setVerified(Verified.DISABLED);
-        super.save(user);
+        return super.save(user);
     }
 }

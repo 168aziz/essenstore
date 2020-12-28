@@ -1,6 +1,7 @@
 package com.essenstore.config;
 
 import com.essenstore.dto.ProductDto;
+import com.essenstore.dto.RegisterUserDto;
 import com.essenstore.entity.*;
 import com.essenstore.factory.EntityServiceFactory;
 import org.modelmapper.ModelMapper;
@@ -9,9 +10,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-
-import java.util.stream.Collectors;
 
 @Configuration
 public class AppConfig {
@@ -47,6 +45,11 @@ public class AppConfig {
     }
 
     @Bean
+    public ActivationCode activationCode() {
+        return new ActivationCode();
+    }
+
+    @Bean
     public FactoryBean<?> serviceLocatorFactoryBean() {
         var serviceLocator = new ServiceLocatorFactoryBean();
         serviceLocator.setServiceLocatorInterface(EntityServiceFactory.class);
@@ -63,8 +66,6 @@ public class AppConfig {
                 map().setBrandName(source.getBrand().getName());
             }
         });
-
-
 
         return modelMapper;
     }
