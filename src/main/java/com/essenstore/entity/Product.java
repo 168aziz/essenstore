@@ -1,5 +1,6 @@
 package com.essenstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,15 +26,12 @@ import java.util.Set;
 public class Product extends BaseEntity {
 
     @Column(name = "description")
-    @JsonProperty(value = "description", required = true)
     private String description;
 
-    @JsonProperty("old-price")
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     @Column(name = "old_price")
     private BigDecimal oldPrice;
 
-    @JsonProperty(value = "current-price")
     @Column(name = "current_price")
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     private BigDecimal currentPrice;
@@ -45,22 +43,18 @@ public class Product extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonProperty(value = "category-id")
     private Category category;
 
     @Column(name = "gender")
-    @JsonProperty(value = "gender")
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
     @ManyToMany
-    @JsonProperty(value = "colors-ids")
     @JoinTable(name = "product_color", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "color_id"))
     private Set<Color> colors = new HashSet<>();
 
     @ManyToMany
-    @JsonProperty(value = "size-ids")
     @JoinTable(name = "product_size", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "size_id"))
     private Set<Size> sizes = new HashSet<>();

@@ -1,7 +1,5 @@
 package com.essenstore.config;
 
-import com.essenstore.dto.ProductDto;
-import com.essenstore.dto.RegisterUserDto;
 import com.essenstore.entity.*;
 import com.essenstore.factory.EntityServiceFactory;
 import org.modelmapper.ModelMapper;
@@ -60,12 +58,12 @@ public class AppConfig {
     public ModelMapper modelMapper() {
         var modelMapper = new ModelMapper();
 
-        modelMapper.addMappings(new PropertyMap<Product, ProductDto>() {
-            @Override
-            protected void configure() {
-                map().setBrandName(source.getBrand().getName());
-            }
-        });
+//        modelMapper.addMappings(new PropertyMap<Product, ProductDto>() {
+//            @Override
+//            protected void configure() {
+//                map().setBrandName(source.getBrand().getName());
+//            }
+//        });
 
         return modelMapper;
     }

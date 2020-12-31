@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage()))
                 .and()
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/**").hasRole(Role.ADMIN.toString())
+                .antMatchers("/swagger-ui/**").permitAll()
                 .and()
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

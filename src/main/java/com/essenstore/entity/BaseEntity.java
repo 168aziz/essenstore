@@ -38,6 +38,7 @@ public abstract class BaseEntity implements Nameable, Serializable {
     private String createdBy;
 
     @CreatedDate
+    @JsonIgnore
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -69,4 +70,5 @@ public abstract class BaseEntity implements Nameable, Serializable {
     public void setName(String name) {
         this.name = StringUtils.normalizeSpace(name);
     }
+
 }

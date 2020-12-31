@@ -2,11 +2,12 @@ package com.essenstore.repository;
 
 import com.essenstore.entity.Product;
 import com.essenstore.entity.Size;
-import org.springframework.stereotype.Repository;
+import com.essenstore.projection.NameProjection;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@Repository
+@RepositoryRestResource(excerptProjection = NameProjection.class)
 public interface SizeRepository extends BaseRepository<Size, Long> {
 
     List<Size> findByProducts(Product product);
