@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = UniqueValidator.class)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Unique {
 

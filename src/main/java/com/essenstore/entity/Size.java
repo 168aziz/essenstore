@@ -16,7 +16,6 @@ import java.util.Set;
 @ToString(of = {}, callSuper = true)
 public class Size extends BaseEntity {
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "product_size", joinColumns = @JoinColumn(name = "size_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))

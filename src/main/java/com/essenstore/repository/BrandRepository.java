@@ -14,6 +14,6 @@ import java.util.List;
 public interface BrandRepository extends BaseRepository<Brand, Long> {
 
     @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.category=:category AND p.gender=:gender ORDER BY  p.brand.name")
-    List<Brand> findDistinctByCategoryAndGender(@Param("category") Category category, @Param("gender") Gender gender);
+    List<Brand> findDistinctByCategoryAndGenderOrderByName(@Param("category") Category category, @Param("gender") Gender gender);
 
 }

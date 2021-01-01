@@ -1,5 +1,6 @@
 package com.essenstore.exception;
 
+import org.springframework.data.rest.webmvc.support.RepositoryConstraintViolationExceptionMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -19,7 +21,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 public class RestExceptions {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         var errors = new HashMap<String, LinkedList<String>>();
         ex.getBindingResult()
                 .getAllErrors()
@@ -35,22 +37,30 @@ public class RestExceptions {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> invalidAuthenticationException() {
+    ResponseEntity<?> invalidAuthenticationException() {
         return ResponseEntity.status(FORBIDDEN).build();
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<?> handleValidationExceptions() {
-        return ResponseEntity.badRequest().build();
+    ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
+        var errors = new ArrayList<RepositoryConstraintViolationExceptionMessage.ValidationError>();
+        ex.getConstraintViolations()
+                .forEach(violation -> {
+                    var msg = RepositoryConstraintViolationExceptionMessage
+                            .ValidationError.of(violation.getLeafBean().getClass().getSimpleName(), violation.getPropertyPath().toString(), violation.getInvalidValue(), violation.getMessage());
+                    errors.add(msg);
+                });
+        return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> notFoundException() {
+    ResponseEntity<?> notFoundException() {
         return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> badRequestException(BadRequestException ex) {
+    ResponseEntity<?> badRequestException(BadRequestException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
 }

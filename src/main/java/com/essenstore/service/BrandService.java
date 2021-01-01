@@ -22,7 +22,7 @@ public class BrandService extends BaseEntityService<Brand, Long> {
     }
 
     public List<Brand> getBy(Category category, Gender gender) {
-        return repository.findDistinctByCategoryAndGender(category, gender);
+        return repository.findDistinctByCategoryAndGenderOrderByName(category, gender);
     }
 
 }

@@ -8,6 +8,7 @@ import com.essenstore.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -28,35 +29,35 @@ public class ProductValidator implements Validator {
         Product product = (Product) obj;
 
         if (product.getBrand().isNone())
-            errors.rejectValue("brand", "Brand is not valid");
+            errors.rejectValue("brand", HttpStatus.BAD_REQUEST.toString(), "Brand is not valid");
 
         if (product.getCategory().isNone())
-            errors.rejectValue("category", "Category is not valid");
+            errors.rejectValue("category", HttpStatus.BAD_REQUEST.toString(), "Category is not valid");
 
         if (product.getGender() == Gender.EMPTY)
-            errors.rejectValue("gender", "Gender is not valid");
+            errors.rejectValue("gender", HttpStatus.BAD_REQUEST.toString(), "Gender is not valid");
 
         if (product.getSizes().stream().anyMatch(Size::isNone))
-            errors.rejectValue("sizes", "Size is not valid");
+            errors.rejectValue("sizes", HttpStatus.BAD_REQUEST.toString(), "Size is not valid");
 
         if (product.getColors().stream().anyMatch(Color::isNone))
-            errors.rejectValue("colors", "Colors is not valid");
+            errors.rejectValue("colors", HttpStatus.BAD_REQUEST.toString(), "Colors is not valid");
 
-        var isImgs = product.getImages()
-                .stream()
-                .map(img -> FilenameUtils.getExtension(img.getName()))
-                .allMatch(ext -> ext.matches("^(png|PNG|jpg|JPG|jpeg|JPEG|webp|WEBP)$"));
-        if (!isImgs)
-            errors.rejectValue("images", "Images not supported", "Imgs not supported");
+//        var isImgs = product.getImages()
+//                .stream()
+//                .map(img -> FilenameUtils.getExtension(img.getName()))
+//                .allMatch(ext -> ext.matches("^(png|PNG|jpg|JPG|jpeg|JPEG|webp|WEBP)$"));
+//        if (!isImgs)
+//            errors.rejectValue("images", "Images not supported", "Imgs not supported");
+//
+//        if (product.getImages().size() < 2)
+//            errors.rejectValue("images", "Upload two images", "Upload two images");
+//
+//        if (product.getImages().stream().anyMatch(image -> image.getSize() > 5242880))
+//            errors.rejectValue("images", "Image size too large");
 
-        if (product.getImages().size() < 2)
-            errors.rejectValue("images", "Upload two images", "Upload two images");
-
-        if (product.getImages().stream().anyMatch(image -> image.getSize() > 5242880))
-            errors.rejectValue("images", "Image size too large");
-
-        if (product.isExist() && !service.exists(product.getId()))
-            errors.rejectValue("id", "Id is not valid");
+        if (service.exists(product.getName()))
+            errors.rejectValue("name", HttpStatus.BAD_REQUEST.toString(), "Name is exists");
 
 
     }

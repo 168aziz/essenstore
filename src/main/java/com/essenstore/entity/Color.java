@@ -18,7 +18,6 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class Color extends BaseEntity {
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "product_color", joinColumns = @JoinColumn(name = "color_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
