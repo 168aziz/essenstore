@@ -1,12 +1,7 @@
 package com.essenstore.entity;
 
-import com.essenstore.service.CategoryService;
-import com.essenstore.validator.Unique;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
 import java.util.HashSet;

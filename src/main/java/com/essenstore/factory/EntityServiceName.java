@@ -16,7 +16,6 @@ public enum EntityServiceName {
     PRODUCT("product", "productService"),
     EMPTY("", "");
 
-
     private final String path;
 
     private final String serviceName;

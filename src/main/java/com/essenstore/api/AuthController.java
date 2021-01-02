@@ -8,7 +8,6 @@ import com.essenstore.service.AuthService;
 import com.essenstore.service.EmailService;
 import com.essenstore.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,6 @@ import javax.validation.constraints.NotBlank;
 import static com.essenstore.utils.Utils.generateCode;
 import static com.essenstore.utils.Utils.getMail;
 
-@Slf4j
 @Validated
 @RestController
 @RequestMapping("api/auth")

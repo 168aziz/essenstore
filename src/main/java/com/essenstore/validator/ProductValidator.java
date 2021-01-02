@@ -4,9 +4,8 @@ import com.essenstore.entity.Color;
 import com.essenstore.entity.Gender;
 import com.essenstore.entity.Product;
 import com.essenstore.entity.Size;
-import com.essenstore.service.ProductService;
+import com.essenstore.repository.ProductRepository;
 import lombok.AllArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,7 @@ import org.springframework.validation.Validator;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductValidator implements Validator {
 
-    private final ProductService service;
+    private final ProductRepository productRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -56,7 +55,7 @@ public class ProductValidator implements Validator {
 //        if (product.getImages().stream().anyMatch(image -> image.getSize() > 5242880))
 //            errors.rejectValue("images", "Image size too large");
 
-        if (service.exists(product.getName()))
+        if (productRepository.existsByName(product.getName()))
             errors.rejectValue("name", HttpStatus.BAD_REQUEST.toString(), "Name is exists");
 
 

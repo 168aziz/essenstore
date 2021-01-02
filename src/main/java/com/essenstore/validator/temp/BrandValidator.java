@@ -1,7 +1,7 @@
 package com.essenstore.validator.temp;
 
 import com.essenstore.entity.Brand;
-import com.essenstore.service.BrandService;
+import com.essenstore.repository.BrandRepository;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import org.springframework.validation.Validator;
 public class BrandValidator implements Validator {
 
     @Setter(onMethod = @__(@Autowired))
-    private BrandService service;
+    private BrandRepository brandRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -22,7 +22,7 @@ public class BrandValidator implements Validator {
     @Override
     public void validate(Object obj, Errors errors) {
         var category = (Brand) obj;
-        if (service.exists(category.getName())) {
+        if (brandRepository.existsByName(category.getName())) {
             errors.rejectValue("name", "Name is exist", "Name is exist");
         }
     }

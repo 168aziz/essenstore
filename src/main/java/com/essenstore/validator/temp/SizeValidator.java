@@ -1,8 +1,7 @@
 package com.essenstore.validator.temp;
 
-import com.essenstore.entity.Category;
 import com.essenstore.entity.Size;
-import com.essenstore.service.CategoryService;
+import com.essenstore.repository.SizeRepository;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +12,7 @@ import org.springframework.validation.Validator;
 public class SizeValidator implements Validator {
 
     @Setter(onMethod = @__(@Autowired))
-    private CategoryService service;
+    private SizeRepository sizeRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -23,7 +22,7 @@ public class SizeValidator implements Validator {
     @Override
     public void validate(Object obj, Errors errors) {
         var size = (Size) obj;
-        if (service.exists(size.getName())) {
+        if (sizeRepository.existsByName(size.getName())) {
             errors.rejectValue("name", "Name is exist", "Name is exist");
         }
     }
