@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Setter
 @Table(name = "image")
 @ToString(of = {"name", "path"}, callSuper = true)
-public class Image extends BaseEntity {
+public class Image extends AuditEntity {
 
     @Column(name = "name")
     private String name;

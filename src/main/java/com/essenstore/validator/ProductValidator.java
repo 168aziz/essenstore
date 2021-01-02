@@ -27,12 +27,6 @@ public class ProductValidator implements Validator {
     public void validate(Object obj, Errors errors) {
         Product product = (Product) obj;
 
-        if (product.getBrand().isNone())
-            errors.rejectValue("brand", HttpStatus.BAD_REQUEST.toString(), "Brand is not valid");
-
-        if (product.getCategory().isNone())
-            errors.rejectValue("category", HttpStatus.BAD_REQUEST.toString(), "Category is not valid");
-
         if (product.getGender() == Gender.EMPTY)
             errors.rejectValue("gender", HttpStatus.BAD_REQUEST.toString(), "Gender is not valid");
 

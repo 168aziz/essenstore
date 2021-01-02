@@ -5,6 +5,7 @@ import com.essenstore.validator.temp.BrandValidator;
 import com.essenstore.validator.temp.CategoryValidator;
 import com.essenstore.validator.temp.ColorValidator;
 import com.essenstore.validator.temp.SizeValidator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -46,4 +47,5 @@ public class RestConfig implements RepositoryRestConfigurer {
 
         exposureConfig.withItemExposure(((metaData, httpMethods) -> httpMethods.disable(HttpMethod.PATCH)));
     }
+
 }

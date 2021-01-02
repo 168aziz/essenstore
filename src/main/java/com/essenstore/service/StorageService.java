@@ -1,10 +1,12 @@
 package com.essenstore.service;
 
+import com.essenstore.entity.Image;
+
 public interface StorageService {
 
-    void upload();
+    void upload(Image image);
 
-    void delete();
+    void delete(Image image);
 
     void edit();
 

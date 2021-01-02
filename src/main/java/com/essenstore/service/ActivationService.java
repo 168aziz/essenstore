@@ -22,13 +22,7 @@ public class ActivationService {
 
     private final ActivationCodeRepository repository;
 
-    private final ActivationCode emptyActivationCode;
-
     private final UserService userService;
-
-    public ActivationCode getBy(String code) {
-        return repository.findByCode(code).orElse(emptyActivationCode);
-    }
 
     @Transactional
     public void save(ActivationCode code) {

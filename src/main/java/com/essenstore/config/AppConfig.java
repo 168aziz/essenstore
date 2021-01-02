@@ -1,73 +1,43 @@
 package com.essenstore.config;
 
-import com.essenstore.entity.*;
-import com.essenstore.factory.EntityServiceFactory;
+import com.essenstore.converter.*;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
-import org.springframework.context.MessageSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class AppConfig {
+@Setter(onMethod = @__(@Autowired))
+public class AppConfig implements WebMvcConfigurer {
 
-    @Bean
-    public Product emptyProduct() {
-        return new Product();
-    }
+    private MultipartImagesFileConverter multipartImagesFileConverter;
 
-    @Bean
-    public Color emptyColor() {
-        return new Color();
-    }
+    private BrandFormatter brandFormatter;
 
-    @Bean
-    public Size emptySize() {
-        return new Size();
-    }
+    private CategoryFormatter categoryFormatter;
 
-    @Bean
-    public Brand emptyBrand() {
-        return new Brand();
-    }
+    private ColorFormatter colorFormatter;
 
-    @Bean
-    public Category emptyCategory() {
-        return new Category();
-    }
+    private SizeFormatter sizeFormatter;
 
-    @Bean
-    public User emptyUser() {
-        return new User();
-    }
+    private GenderFormatter genderFormatter;
 
-    @Bean
-    public ActivationCode activationCode() {
-        return new ActivationCode();
-    }
-
-    @Bean
-    public FactoryBean<?> serviceLocatorFactoryBean() {
-        var serviceLocator = new ServiceLocatorFactoryBean();
-        serviceLocator.setServiceLocatorInterface(EntityServiceFactory.class);
-        return serviceLocator;
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(multipartImagesFileConverter);
+        registry.addFormatter(brandFormatter);
+        registry.addFormatter(categoryFormatter);
+        registry.addFormatter(colorFormatter);
+        registry.addFormatter(sizeFormatter);
+        registry.addFormatter(genderFormatter);
     }
 
     @Bean
     public ModelMapper modelMapper() {
-        var modelMapper = new ModelMapper();
-
-//        modelMapper.addMappings(new PropertyMap<Product, ProductDto>() {
-//            @Override
-//            protected void configure() {
-//                map().setBrandName(source.getBrand().getName());
-//            }
-//        });
-
-        return modelMapper;
+        return new ModelMapper();
     }
 
 }
