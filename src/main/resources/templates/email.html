@@ -11,9 +11,9 @@
 </head>
 
 <body>
-<p th:text="'Dear '+${name}"></p>
-<p th:if="${#strings.contains(link,'activate')}" th:text="'Activation code: ' + ${code}"></p>
-<a th:href="@{${link}}" target="_blank" th:text="'Activation link'"></a>
+<p th:text="'Dear, '+${name}+' '+${surname}"></p>
+<p th:text="'Your activation code: ' + ${code}"></p>
+<!--<a th:href="@{${link}}" target="_blank" th:text="'Activation link'"></a>-->
 </body>
 
 </html>

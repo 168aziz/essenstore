@@ -10,8 +10,11 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "users")
-@ToString(of = {"surname", "email", "role"}, callSuper = true)
-public class User extends BaseEntity {
+@ToString(of = {"name", "surname", "email", "role"}, callSuper = true)
+public class User extends AuditEntity {
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "surname")
     private String surname;

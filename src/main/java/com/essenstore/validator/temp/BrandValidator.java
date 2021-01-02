@@ -1,9 +1,7 @@
 package com.essenstore.validator.temp;
 
 import com.essenstore.entity.Brand;
-import com.essenstore.entity.Category;
 import com.essenstore.service.BrandService;
-import com.essenstore.service.CategoryService;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

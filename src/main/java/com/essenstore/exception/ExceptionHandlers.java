@@ -10,30 +10,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 
-import static com.essenstore.utils.Utils.response;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestControllerAdvice
-public class RestExceptions {
+public class ExceptionHandlers {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        var errors = new HashMap<String, LinkedList<String>>();
+        var errors = new ArrayList<RepositoryConstraintViolationExceptionMessage.ValidationError>();
         ex.getBindingResult()
                 .getAllErrors()
                 .forEach(error -> {
-                    var fieldName = ((FieldError) error).getField();
-                    var errorMsg = error.getDefaultMessage();
-                    var list = errors.getOrDefault(fieldName, new LinkedList<>());
-                    list.add(errorMsg);
-                    errors.put(fieldName, list);
+                    var msg = RepositoryConstraintViolationExceptionMessage
+                            .ValidationError.of(ex.getObjectName(), ((FieldError) error).getField(), ((FieldError) error).getRejectedValue(), error.getDefaultMessage());
+                    errors.add(msg);
                 });
-
-        return response(errors, BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(AuthenticationException.class)

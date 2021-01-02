@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -63,6 +63,7 @@ public class Utils {
                 .subject("Confirm code")
                 .model(Map.of("code", code.getCode(),
                         "name", code.getUser().getName(),
+                        "surname", code.getUser().getSurname(),
                         "link", code.getUrl()))
                 .build();
     }
@@ -77,7 +78,7 @@ public class Utils {
                 .build();
     }
 
-    public static Duration timeDifference(Instant instant) {
-        return Duration.between(LocalDateTime.now(), instant);
+    public static Duration timeDifferenceFromNow(Instant instant) {
+        return Duration.between(instant, Instant.now());
     }
 }

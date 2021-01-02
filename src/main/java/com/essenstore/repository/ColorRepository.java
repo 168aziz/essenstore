@@ -8,7 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(excerptProjection = NameProjection.class)
-public interface ColorRepository extends BaseRepository<Color, Long> {
+public interface ColorRepository extends TransformRepository<Color, Long> {
 
     List<Color> findByProducts(Product product);
 

@@ -11,7 +11,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(excerptProjection = NameProjection.class)
-public interface BrandRepository extends BaseRepository<Brand, Long> {
+public interface BrandRepository extends TransformRepository<Brand, Long> {
 
     @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.category=:category AND p.gender=:gender ORDER BY  p.brand.name")
     List<Brand> findDistinctByCategoryAndGenderOrderByName(@Param("category") Category category, @Param("gender") Gender gender);

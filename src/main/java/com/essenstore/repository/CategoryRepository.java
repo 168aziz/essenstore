@@ -9,7 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.Optional;
 
 @RepositoryRestResource(excerptProjection = NameProjection.class)
-public interface CategoryRepository extends BaseRepository<Category, Long> {
+public interface CategoryRepository extends TransformRepository<Category, Long> {
 
     @EntityGraph(value = "Category.products", type = EntityGraphType.LOAD)
     Optional<Category> findWithProductsByNameIgnoreCase(String name);

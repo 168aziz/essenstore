@@ -3,7 +3,7 @@ package com.essenstore.config;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AWSConfiguration {
+public class AWSConfig {
 
 //    @Value("${aws.access.key.id}")
 //    private String accessKey;
