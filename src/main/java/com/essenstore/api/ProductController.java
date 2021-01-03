@@ -1,29 +1,36 @@
 package com.essenstore.api;
 
 import com.essenstore.entity.Product;
-import com.essenstore.service.ProductService;
+import com.essenstore.repository.ProductRepository;
+import com.essenstore.utils.Utils;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import java.util.List;
 
-@RestController
+@RepositoryRestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductRepository repository;
+
+    private String imageUrl = "fwef";
 
 
-    @PostMapping("/products")
-    public ResponseEntity<?> save(@ModelAttribute @Valid Product product) {
-        System.out.println(product.getImages());
-        System.out.println(product);
-        productService.save(product);
+    @RequestMapping(value = "/products", method = RequestMethod.POST)
+    public ResponseEntity<?> save(@RequestPart("product") Product product, @RequestPart("images") List<MultipartFile> files) {
+        product.setImages(Utils.multipartListToImageSet(files, imageUrl, Utils.buildPath(product)));
+
+        repository.save(product);
         return ResponseEntity.accepted().build();
     }
+
 
 }

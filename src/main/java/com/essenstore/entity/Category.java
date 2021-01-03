@@ -11,12 +11,10 @@ import java.util.Set;
 @Setter
 @Getter
 @Table(name = "category")
-@NamedEntityGraph(name = "Category.products",
-        attributeNodes = @NamedAttributeNode("products"))
 public class Category extends BaseEntity {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private final Set<Product> products = new HashSet<>();
+    private Set<Product> products = new HashSet<>();
 
     @Override
 //    @Unique(service = CategoryService.class)

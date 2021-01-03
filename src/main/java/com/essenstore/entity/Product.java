@@ -1,7 +1,6 @@
 package com.essenstore.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.essenstore.validator.Images;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
@@ -12,9 +11,9 @@ import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,31 +58,26 @@ public class Product extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
-    @NotNull
+    @NotEmpty
     @ManyToMany
     @JoinTable(name = "product_color", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "color_id"))
     private Set<Color> colors = new HashSet<>();
 
-    @NotNull
+    @NotEmpty
     @ManyToMany
     @JoinTable(name = "product_size", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "size_id"))
     private Set<Size> sizes = new HashSet<>();
 
+    @Images
+    @NotEmpty
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Image> images = new HashSet<>();
+    private Set<com.essenstore.entity.Image> images = new HashSet<>();
 
     public void setDescription(String description) {
         this.description = StringUtils.normalizeSpace(description);
     }
 
-    public void setColors(Collection<Color> colors) {
-        this.colors = new HashSet<>(colors);
-    }
-
-    public void setSizes(Collection<Size> sizes) {
-        this.sizes = new HashSet<>(sizes);
-    }
 
 }

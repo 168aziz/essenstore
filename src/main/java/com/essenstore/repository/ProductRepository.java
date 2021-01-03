@@ -17,5 +17,4 @@ public interface ProductRepository extends TransformRepository<Product, Long> {
     @Override
     @RestResource(exported = false)
     <S extends Product> S save(S s);
-
 }

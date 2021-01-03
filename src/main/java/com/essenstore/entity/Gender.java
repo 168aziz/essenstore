@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Getter
 public enum Gender {
 
-    MAN("men"), WOMAN("women"), BOY("boys"), GIRL("girls"), EMPTY("empty");
+    MAN("men"), WOMAN("women"), BOY("boys"), GIRL("girls");
 
     private final String path;
 
@@ -21,10 +21,4 @@ public enum Gender {
         return StringUtils.capitalize(this.name());
     }
 
-    public static Gender get(String gender) {
-        return Arrays.stream(Gender.values())
-                .filter(g -> g.path.equals(gender))
-                .findFirst()
-                .orElse(EMPTY);
-    }
 }

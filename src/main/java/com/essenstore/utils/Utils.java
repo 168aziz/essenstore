@@ -4,18 +4,20 @@ import com.essenstore.entity.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class Utils {
 
@@ -80,5 +82,25 @@ public class Utils {
 
     public static Duration timeDifferenceFromNow(Instant instant) {
         return Duration.between(instant, Instant.now());
+    }
+
+    public static Set<Image> multipartListToImageSet(List<MultipartFile> files, String imageUrl, String path) {
+        return files.stream()
+                .map(file -> {
+                    var fileUUID = UUID.randomUUID().toString();
+                    var image = new Image();
+                    image.setMultipartFile(file);
+                    image.setSize(file.getSize());
+                    image.setName(format("%s.%s", fileUUID, getExtension(file.getOriginalFilename())));
+                    image.setPath(path);
+                    image.setUrl(imageUrl);
+                    return image;
+                }).collect(Collectors.toSet());
+    }
+
+    public static String buildPath(Product product) {
+        return format("%s/%s/%s/%s", product.getGender(),
+                product.getCategory().getName(), product.getBrand().getName(),
+                product.getName()).replaceAll("\\s", "-");
     }
 }
