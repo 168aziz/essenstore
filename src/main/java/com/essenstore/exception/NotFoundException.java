@@ -11,4 +11,7 @@ public class NotFoundException extends BasicApiException {
         super(NOT_FOUND.value(), "Not Found");
     }
 
+    public NotFoundException(String message) {
+        super(NOT_FOUND.value(), message);
+    }
 }

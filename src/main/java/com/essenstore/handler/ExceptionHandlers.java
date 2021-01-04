@@ -1,5 +1,8 @@
-package com.essenstore.exception;
+package com.essenstore.handler;
 
+import com.essenstore.exception.BadRequestException;
+import com.essenstore.exception.NotFoundException;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.data.rest.webmvc.support.RepositoryConstraintViolationExceptionMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -58,5 +61,11 @@ public class ExceptionHandlers {
     ResponseEntity<?> badRequestException(BadRequestException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler({ConversionFailedException.class, IllegalArgumentException.class})
+    ResponseEntity<?> conversionFailedException() {
+        return ResponseEntity.badRequest().build();
+    }
+
 
 }

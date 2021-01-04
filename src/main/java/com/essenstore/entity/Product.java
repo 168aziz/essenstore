@@ -1,11 +1,10 @@
 package com.essenstore.entity;
 
 import com.essenstore.validator.Images;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -24,9 +23,6 @@ import java.util.Set;
 @Table(name = "product")
 @ToString(callSuper = true)
 @JsonNaming(PropertyNamingStrategy.KebabCaseStrategy.class)
-@NamedEntityGraph(name = "Product.csi",
-        attributeNodes = {@NamedAttributeNode("colors"), @NamedAttributeNode("sizes"), @NamedAttributeNode("images")})
-@NamedEntityGraph(name = "Product.images", attributeNodes = @NamedAttributeNode("images"))
 public class Product extends BaseEntity {
 
     @NotBlank

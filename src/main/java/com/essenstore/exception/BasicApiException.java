@@ -14,4 +14,6 @@ public class BasicApiException extends RuntimeException{
         this.message = message;
     }
 
+
+
 }

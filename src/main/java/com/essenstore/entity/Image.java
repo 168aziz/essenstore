@@ -28,7 +28,6 @@ public class Image extends BaseEntity {
     private String url;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "product_id")
     private Product product;
 

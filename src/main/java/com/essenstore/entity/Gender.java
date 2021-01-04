@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Getter
 public enum Gender {
 
-    MAN("men"), WOMAN("women"), BOY("boys"), GIRL("girls");
+    MAN("men"), WOMAN("women"), BOY("boys"), GIRL("girls"), EMPTY("empty");
 
     private final String path;
 

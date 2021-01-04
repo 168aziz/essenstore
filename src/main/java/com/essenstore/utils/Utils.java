@@ -100,7 +100,10 @@ public class Utils {
 
     public static String buildPath(Product product) {
         return format("%s/%s/%s/%s", product.getGender(),
-                product.getCategory().getName(), product.getBrand().getName(),
+                product.getCategory() != null ? product.getCategory().getName() : "undefined",
+                product.getBrand() != null ? product.getBrand().getName() : "undefined",
                 product.getName()).replaceAll("\\s", "-");
     }
+
+
 }
