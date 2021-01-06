@@ -4,6 +4,7 @@ import com.essenstore.entity.ActivationCode;
 import com.essenstore.entity.Verified;
 import com.essenstore.exception.ActivationCodeExpiredException;
 import com.essenstore.exception.NotFoundException;
+import com.essenstore.exception.UserAlreadyVerifiedException;
 import com.essenstore.repository.ActivationCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
-import static com.essenstore.utils.Utils.timeDifference;
+import static com.essenstore.utils.Utils.timeDifferenceFromNow;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,17 +22,10 @@ public class ActivationService {
 
     private final ActivationCodeRepository repository;
 
-    private final ActivationCode emptyActivationCode;
-
     private final UserService userService;
-
-    public ActivationCode getBy(String code) {
-        return repository.findByCode(code).orElse(emptyActivationCode);
-    }
 
     @Transactional
     public void save(ActivationCode code) {
-
         repository.findByUser(code.getUser())
                 .ifPresentOrElse(c -> {
                     repository.delete(c);
@@ -54,12 +47,17 @@ public class ActivationService {
         repository.findByCode(code).ifPresent(repository::delete);
     }
 
+    @Transactional
     public void activate(String code) {
         repository.findByCode(code)
                 .map(exist -> {
-                    if (timeDifference(exist.getCreatedAt())
-                            .compareTo(Duration.of(1, ChronoUnit.MINUTES)) < 0) {
+                    if (exist.getUser().getVerified().isVerified())
+                        throw new UserAlreadyVerifiedException();
+
+                    if (Duration.ofMinutes(2)
+                            .compareTo(timeDifferenceFromNow(exist.getCreatedAt())) > 0) {
                         exist.getUser().setVerified(Verified.ENABLED);
+                        repository.delete(exist);
                         userService.save(exist.getUser());
                         return true;
                     } else

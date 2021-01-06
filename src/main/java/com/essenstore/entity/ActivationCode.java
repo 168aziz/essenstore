@@ -10,13 +10,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "activation_code")
-public class ActivationCode extends BaseEntity {
+@ToString
+public class ActivationCode extends AuditEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     private String code;
+
     @Transient
     private String url;
 

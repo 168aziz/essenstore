@@ -2,11 +2,13 @@ package com.essenstore.api;
 
 import com.essenstore.dto.AuthDto;
 import com.essenstore.dto.RegisterUserDto;
+import com.essenstore.entity.User;
 import com.essenstore.service.ActivationService;
 import com.essenstore.service.AuthService;
-import com.essenstore.service.GmailMailSenderService;
+import com.essenstore.service.EmailService;
 import com.essenstore.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-import static com.essenstore.utils.Utils.*;
+import static com.essenstore.utils.Utils.generateCode;
+import static com.essenstore.utils.Utils.getMail;
 
 @Validated
 @RestController
@@ -33,11 +36,14 @@ public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final GmailMailSenderService mailSenderService;
+    private final EmailService mailSenderService;
 
     private final ActivationService activationService;
 
-    private String url="http:localhost:8080";
+    private final ModelMapper modelMapper;
+
+    @Value("${app.url}")
+    private String url;
 
     @PostMapping("login")
     @PreAuthorize("isAnonymous()")
@@ -49,15 +55,15 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterUserDto registerUserDto) {
         registerUserDto.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
-
-        var user = userService.save(registerUserDto);
-
+        var user = userService.register(modelMapper.map(registerUserDto, User.class));
         var code = generateCode(user, url);
+
         mailSenderService.send(getMail(code));
         activationService.save(code);
+
         return ResponseEntity.accepted().build();
     }
 

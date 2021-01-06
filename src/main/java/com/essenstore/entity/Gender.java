@@ -21,10 +21,4 @@ public enum Gender {
         return StringUtils.capitalize(this.name());
     }
 
-    public static Gender get(String gender) {
-        return Arrays.stream(Gender.values())
-                .filter(g -> g.path.equals(gender))
-                .findFirst()
-                .orElse(EMPTY);
-    }
 }

@@ -2,12 +2,14 @@ package com.essenstore.repository;
 
 import com.essenstore.entity.Color;
 import com.essenstore.entity.Product;
-import org.springframework.stereotype.Repository;
+import com.essenstore.projection.NameProjection;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@Repository
-public interface ColorRepository extends BaseRepository<Color, Long> {
+@RepositoryRestResource(excerptProjection = NameProjection.class)
+public interface ColorRepository extends TransformRepository<Color, Long> {
 
     List<Color> findByProducts(Product product);
+
 }

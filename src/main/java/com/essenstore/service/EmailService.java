@@ -26,7 +26,7 @@ public abstract class EmailService {
         this.templateEngine = templateEngine;
     }
 
-    public abstract void send(Mail mail) throws MessagingException;
+    public abstract void send(Mail mail);
 
 
     protected MimeMessage getMimeMessage(Mail mail) throws MessagingException {
@@ -35,6 +35,7 @@ public abstract class EmailService {
 
         Context context = new Context();
         context.setVariables(mail.getModel());
+
         String html = templateEngine.process("email", context);
 
         helper.setTo(mail.getTo());

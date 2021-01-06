@@ -1,21 +1,23 @@
 package com.essenstore.utils;
 
 import com.essenstore.entity.*;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class Utils {
 
@@ -23,20 +25,23 @@ public class Utils {
 
     private static final String sysTempDirectory = System.getProperty("java.io.tmpdir");
 
-    public static ResponseEntity<?> response(Object obj, HttpStatus httpStatus) {
-        return new ResponseEntity<>(obj, httpStatus);
-    }
-
     public static Product updateProduct(Product current, Product product) {
-        current.setName(product.getName());
-        current.setDescription(product.getDescription());
-        current.setCategory(product.getCategory());
-        current.setBrand(product.getBrand());
+        if (!StringUtils.isBlank(product.getName()))
+            current.setName(product.getName());
+        if (!StringUtils.isBlank(product.getDescription()))
+            current.setDescription(product.getDescription());
+        if (product.getCategory() != null)
+            current.setCategory(product.getCategory());
+        if (product.getBrand() != null)
+            current.setBrand(product.getBrand());
+        if (product.getGender() != null && product.getGender() != Gender.EMPTY)
+            current.setGender(product.getGender());
+        if (product.getCurrentPrice() != null)
+            current.setCurrentPrice(product.getCurrentPrice());
         current.setOldPrice(product.getOldPrice());
-        current.setCurrentPrice(product.getCurrentPrice());
-        current.setGender(product.getGender());
-        current.setColors(product.getColors());
-        current.setSizes(product.getSizes());
+//        if (product.getColors() != null)
+//            current.setColors(product.getColors());
+//        current.setSizes(product.getSizes());
         return current;
     }
 
@@ -63,6 +68,7 @@ public class Utils {
                 .subject("Confirm code")
                 .model(Map.of("code", code.getCode(),
                         "name", code.getUser().getName(),
+                        "surname", code.getUser().getSurname(),
                         "link", code.getUrl()))
                 .build();
     }
@@ -77,7 +83,30 @@ public class Utils {
                 .build();
     }
 
-    public static Duration timeDifference(Instant instant) {
-        return Duration.between(LocalDateTime.now(), instant);
+    public static Duration timeDifferenceFromNow(Instant instant) {
+        return Duration.between(instant, Instant.now());
     }
+
+    public static Set<Image> multipartListToImageSet(List<MultipartFile> files, String imageUrl, String path) {
+        return files.stream()
+                .map(file -> {
+                    var fileUUID = UUID.randomUUID().toString();
+                    var image = new Image();
+                    image.setMultipartFile(file);
+                    image.setSize(file.getSize());
+                    image.setName(format("%s.%s", fileUUID, getExtension(file.getOriginalFilename())));
+                    image.setPath(path);
+                    image.setUrl(imageUrl);
+                    return image;
+                }).collect(Collectors.toSet());
+    }
+
+    public static String buildPath(Product product) {
+        return format("%s/%s/%s/%s", product.getGender(),
+                product.getCategory() != null ? product.getCategory().getName() : "undefined",
+                product.getBrand() != null ? product.getBrand().getName() : "undefined",
+                product.getName()).replaceAll("\\s", "-");
+    }
+
+
 }

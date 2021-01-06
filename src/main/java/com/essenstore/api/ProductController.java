@@ -1,66 +1,60 @@
 package com.essenstore.api;
 
-import com.essenstore.dto.ProductDetailDto;
+import com.essenstore.converter.ProductConverter;
 import com.essenstore.dto.ProductDto;
-import com.essenstore.dto.ProductPageDto;
 import com.essenstore.entity.Product;
-import com.essenstore.service.ProductService;
+import com.essenstore.repository.ProductRepository;
+import com.essenstore.service.AWSS3Service;
+import com.essenstore.utils.Utils;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Positive;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
-@Validated
-@RestController
-@RequestMapping("api/product")
+@RepositoryRestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductRepository repository;
 
-    private final ModelMapper mapper;
+    private final ProductConverter converter;
 
-    @PreAuthorize("permitAll()")
-    @GetMapping("/{gender}/{category}")
-    public ResponseEntity<?> getBy(@PathVariable String gender,
-                                   @PathVariable String category,
-                                   @PageableDefault(size = 18) Pageable pageable) {
-        return ResponseEntity.ok(mapper.map(productService.getBy(category, gender, pageable), ProductPageDto.class));
+    private final AWSS3Service awss3Service;
+
+    @Value("${image.url}")
+    private String imageUrl;
+
+    @RequestMapping(value = "/products", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> save(@RequestPart("product") ProductDto productDto, @RequestPart("images") List<MultipartFile> files) {
+        return dtoToProduct(productDto, files)
+                .map(product -> {
+                    repository.save(product);
+                    awss3Service.upload(product.getImages());
+                    return ResponseEntity.accepted().build();
+                }).orElse(ResponseEntity.badRequest().build());
     }
 
-    @GetMapping("{id}")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> getBy(@PathVariable Long id) {
-        return ResponseEntity.ok(mapper.map(productService.getBy(id), ProductDto.class));
+    private Optional<Product> dtoToProduct(ProductDto productDto, List<MultipartFile> files) {
+        var product = converter.convert(productDto);
+        if (product != null) {
+            if (product.getImages() == null)
+                product.setImages(new HashSet<>());
+            product.getImages().addAll(Utils.multipartListToImageSet(files, imageUrl, Utils.buildPath(product)));
+            product.getImages().forEach(image -> image.setProduct(product));
+            return Optional.of(product);
+        }
+        return Optional.empty();
     }
 
-    @PostMapping
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> add(@RequestBody ProductDetailDto productDto) {
-        productService.save(mapper.map(productDto, Product.class));
-        return ResponseEntity.accepted().build();
-    }
-
-    @PutMapping("{id}")
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> update(@PathVariable @Positive Long id,
-                                    @RequestBody ProductDetailDto productDto) {
-        return ResponseEntity.ok(productService.update(id, mapper.map(productDto, Product.class)));
-    }
-
-    @DeleteMapping("{id}")
-    @Secured({"ROLE_ADMIN", "ROLE_MODERATOR"})
-    public ResponseEntity<?> delete(@PathVariable @Positive Long id) {
-        productService.delete(id);
-        return ResponseEntity.accepted().build();
-    }
 
 }
