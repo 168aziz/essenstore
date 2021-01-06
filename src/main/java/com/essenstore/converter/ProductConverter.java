@@ -45,7 +45,6 @@ public class ProductConverter implements Converter<ProductDto, Product> {
             target.setColors(colors);
         }
 
-
         if (source.getImages() != null) {
             var images = source.getImages()
                     .stream()

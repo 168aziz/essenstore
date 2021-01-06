@@ -1,10 +1,11 @@
 package com.essenstore.entity;
 
 import com.essenstore.validator.Images;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.format.annotation.NumberFormat;
 

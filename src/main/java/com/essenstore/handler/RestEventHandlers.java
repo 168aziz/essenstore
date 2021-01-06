@@ -4,18 +4,15 @@ import com.essenstore.entity.Image;
 import com.essenstore.entity.Product;
 import com.essenstore.service.AWSS3Service;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
-import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
-import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
 @Component
 @RepositoryEventHandler
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ProductEventHandlers {
+public class RestEventHandlers {
 
     private final AWSS3Service awss3Service;
 

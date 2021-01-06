@@ -1,9 +1,9 @@
 package com.essenstore.utils;
 
 import com.essenstore.entity.*;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -25,20 +25,23 @@ public class Utils {
 
     private static final String sysTempDirectory = System.getProperty("java.io.tmpdir");
 
-    public static ResponseEntity<?> response(Object obj, HttpStatus httpStatus) {
-        return new ResponseEntity<>(obj, httpStatus);
-    }
-
     public static Product updateProduct(Product current, Product product) {
-        current.setName(product.getName());
-        current.setDescription(product.getDescription());
-        current.setCategory(product.getCategory());
-        current.setBrand(product.getBrand());
+        if (!StringUtils.isBlank(product.getName()))
+            current.setName(product.getName());
+        if (!StringUtils.isBlank(product.getDescription()))
+            current.setDescription(product.getDescription());
+        if (product.getCategory() != null)
+            current.setCategory(product.getCategory());
+        if (product.getBrand() != null)
+            current.setBrand(product.getBrand());
+        if (product.getGender() != null && product.getGender() != Gender.EMPTY)
+            current.setGender(product.getGender());
+        if (product.getCurrentPrice() != null)
+            current.setCurrentPrice(product.getCurrentPrice());
         current.setOldPrice(product.getOldPrice());
-        current.setCurrentPrice(product.getCurrentPrice());
-        current.setGender(product.getGender());
-        current.setColors(product.getColors());
-        current.setSizes(product.getSizes());
+//        if (product.getColors() != null)
+//            current.setColors(product.getColors());
+//        current.setSizes(product.getSizes());
         return current;
     }
 

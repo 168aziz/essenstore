@@ -39,11 +39,13 @@ public class AWSS3Service {
     @Async
     public void upload(Collection<Image> images) {
         images.forEach(image -> {
+            if (image.getMultipartFile() == null)
+                return;
             var metadata = new ObjectMetadata();
             metadata.setContentLength(image.getMultipartFile().getSize());
             metadata.setContentType(image.getMultipartFile().getContentType());
             try {
-                var objectRequest = new PutObjectRequest(bucketName, image.getPath() + image.getName(), image.getMultipartFile().getInputStream(),metadata);
+                var objectRequest = new PutObjectRequest(bucketName, image.getPath() + image.getName(), image.getMultipartFile().getInputStream(), metadata);
                 amazonS3.putObject(objectRequest);
             } catch (IOException e) {
                 e.printStackTrace();

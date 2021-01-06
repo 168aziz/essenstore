@@ -1,10 +1,10 @@
 package com.essenstore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Transient;
 import org.springframework.web.multipart.MultipartFile;
 
